@@ -45,6 +45,9 @@ tw_current_directory_color="$tw_colors[current_directory]"
 tw_git_branch_color="$tw_colors[git_branch]"
 
 tw_arrow="%F{$tw_colors[arrow]}->"
+if [ ! -z "$TYPEWRITTEN_GIT_BRANCH_SYMBOL" ]; then
+  tw_arrow="%F{$tw_colors[arrow]}$TYPEWRITTEN_GIT_BRANCH_SYMBOL"
+fi;
 
 tw_get_virtual_env() {
   if [[ -z $VIRTUAL_ENV_DISABLE_PROMPT ]]; then
@@ -95,6 +98,10 @@ tw_redraw() {
 
   tw_layout="$TYPEWRITTEN_PROMPT_LAYOUT"
   tw_git_info="$tw_prompt_data[tw_git_branch]$tw_prompt_data[tw_git_status]"
+  if [ "$TYPEWRITTEN_DISABLE_GIT_STATUS" = true ]; then
+    tw_git_info="$tw_prompt_data[tw_git_branch]"
+  fi;
+
   if [ "$tw_layout" = "half_pure" ]; then
     PROMPT="$BREAK_LINE%F{$tw_git_branch_color}$tw_git_info$BREAK_LINE$tw_env_prompt"
     RPROMPT="$tw_right_prompt_prefix$tw_displayed_wd"
@@ -105,6 +112,9 @@ tw_redraw() {
     fi;
     if [ "$tw_layout" = "pure" ]; then
       PROMPT="$BREAK_LINE$tw_displayed_wd$tw_git_arrow_info$BREAK_LINE$tw_env_prompt"
+      RPROMPT=""
+    elif [ "$tw_layout" = "angel" ]; then
+      PROMPT="$tw_displayed_wd$tw_git_arrow_info $tw_env_prompt"
       RPROMPT=""
     else
       if [ "$tw_layout" = "singleline_verbose" ]; then
